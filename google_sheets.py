@@ -17,6 +17,9 @@ import pickle
 
 logger = logging.getLogger(__name__)
 
+# Constants
+MAX_SUMMARY_LENGTH = 500  # Maximum length for summary in spreadsheet
+
 # Scopes for Google Sheets API (includes Docs for compatibility)
 SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets',
@@ -208,8 +211,8 @@ class GoogleSheetsWriter:
                 
                 # Truncate summary if too long
                 summary = article.get('summary', '')
-                if len(summary) > 500:
-                    summary = summary[:497] + "..."
+                if len(summary) > MAX_SUMMARY_LENGTH:
+                    summary = summary[:MAX_SUMMARY_LENGTH - 3] + "..."
                 
                 row = [
                     timestamp,

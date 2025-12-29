@@ -14,7 +14,18 @@ echo "✓ Python version: $python_version"
 # Install dependencies
 echo ""
 echo "Installing dependencies..."
-pip install -r requirements.txt
+
+# Check for pip availability
+if command -v pip3 &> /dev/null; then
+    PIP_CMD=pip3
+elif command -v pip &> /dev/null; then
+    PIP_CMD=pip
+else
+    echo "✗ pip not found. Please install pip first."
+    exit 1
+fi
+
+$PIP_CMD install -r requirements.txt
 
 if [ $? -eq 0 ]; then
     echo "✓ Dependencies installed successfully"

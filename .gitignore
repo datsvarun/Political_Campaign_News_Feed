@@ -35,6 +35,7 @@ ENV/
 # Credentials
 credentials.json
 token.json
+token.pickle
 
 # Logs
 *.log

@@ -41,6 +41,7 @@ RSS_FEEDS = {
 
 # Leave empty to create new doc, or provide ID to append
 GOOGLE_DOC_ID = ""
+DOC_TITLE_PREFIX = "AAP News Monitor"
 
 # Scraping configuration
 SCRAPE_INTERVAL_HOURS = 1

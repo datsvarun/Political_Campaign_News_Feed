@@ -55,10 +55,11 @@ def run_scraper(doc_id=None):
             doc_id = config.GOOGLE_DOC_ID
         
         # Write articles to Google Doc
+        doc_title = f"{config.DOC_TITLE_PREFIX} - {datetime.now().strftime('%Y-%m-%d')}"
         doc_id = docs_writer.write_articles(
             articles, 
             doc_id=doc_id,
-            doc_title=f"AAP News Monitor - {datetime.now().strftime('%Y-%m-%d')}"
+            doc_title=doc_title
         )
         
         logger.info(f"Successfully processed {len(articles)} articles")

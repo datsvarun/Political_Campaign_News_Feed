@@ -50,6 +50,7 @@ RSS_FEEDS = {
 
 # Google Docs Configuration
 GOOGLE_DOC_ID = ""  # Leave empty if you want to create a new doc each time, or provide a specific document ID
+DOC_TITLE_PREFIX = "AAP News Monitor"  # Prefix for document titles when creating new docs
 
 # Scraping Configuration
 SCRAPE_INTERVAL_HOURS = 1  # How often to scrape (in hours)

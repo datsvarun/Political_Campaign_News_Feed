@@ -36,7 +36,7 @@ jobs:
       
       - name: Run scraper
         run: |
-          python main.py --mode once --doc-id '${{ secrets.GOOGLE_DOC_ID }}'
+          python main.py --mode once --output sheets --sheet-id '${{ secrets.GOOGLE_SHEET_ID }}'
         env:
           PYTHONUNBUFFERED: 1
       

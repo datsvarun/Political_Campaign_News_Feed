@@ -6,15 +6,16 @@ A Python-based RSS feed scraper that monitors news articles in English, Hindi, a
 
 - 📰 Scrapes multiple RSS feeds in English, Hindi, and Marathi
 - 🔍 Keyword-based filtering for relevant articles
-- 📝 Automatically pushes articles to Google Docs
+- 📝 Automatically pushes articles to **Google Docs** or **Google Sheets**
+- 📊 Google Sheets output with proper columns (Headline, Link, Summary, Source, Language, etc.)
 - ⏰ Scheduled execution (runs every 1 hour by default)
 - 🚀 Easy to configure and customize
-- 📊 Logs all activities for monitoring
+- 📋 Logs all activities for monitoring
 
 ## Requirements
 
 - Python 3.7 or higher
-- Google Cloud Project with Docs API enabled
+- Google Cloud Project with Docs and/or Sheets API enabled
 - Google OAuth credentials
 
 ## Installation
@@ -30,16 +31,16 @@ A Python-based RSS feed scraper that monitors news articles in English, Hindi, a
    pip install -r requirements.txt
    ```
 
-3. **Set up Google Docs API**
+3. **Set up Google APIs**
    
    a. Go to [Google Cloud Console](https://console.cloud.google.com/)
    
    b. Create a new project (or select an existing one)
    
-   c. Enable the Google Docs API:
+   c. Enable the required APIs:
       - Go to "APIs & Services" > "Library"
-      - Search for "Google Docs API"
-      - Click "Enable"
+      - Search for "Google Docs API" and click "Enable"
+      - Search for "Google Sheets API" and click "Enable"
    
    d. Create OAuth credentials:
       - Go to "APIs & Services" > "Credentials"
@@ -52,10 +53,31 @@ A Python-based RSS feed scraper that monitors news articles in English, Hindi, a
    Edit `config.py` to customize:
    - Keywords to search for
    - RSS feed URLs for different languages
+   - Output format (Google Docs or Google Sheets)
    - Scraping interval
-   - Google Doc ID (optional)
+   - Document/Spreadsheet ID (optional)
 
 ## Configuration
+
+### Output Format
+
+Choose between Google Docs or Google Sheets in `config.py`:
+
+```python
+OUTPUT_FORMAT = "sheets"  # Use 'docs' for Google Docs or 'sheets' for Google Sheets
+```
+
+**Google Sheets** provides structured data with columns:
+- Timestamp
+- Title
+- Link
+- Summary
+- Source
+- Language
+- Published Date
+- Matched Keywords
+
+**Google Docs** provides formatted text output with article details.
 
 ### Keywords
 
@@ -91,24 +113,36 @@ RSS_FEEDS = {
 }
 ```
 
-### Google Doc ID
+### Document/Spreadsheet ID
 
-To append to an existing Google Doc, set `GOOGLE_DOC_ID` in `config.py`:
+To append to an existing document/spreadsheet, set the ID in `config.py`:
 
 ```python
+# For Google Docs
 GOOGLE_DOC_ID = "your-document-id-here"
+
+# For Google Sheets
+GOOGLE_SHEET_ID = "your-spreadsheet-id-here"
 ```
 
-Leave it empty to create a new document for each run.
+Leave them empty to create new documents/spreadsheets for each run.
 
 ## Usage
 
-### Run Once
+### Run Once with Google Sheets (Default)
 
-To run the scraper once and exit:
+To run the scraper once and push to Google Sheets:
 
 ```bash
 python main.py --mode once
+```
+
+### Run Once with Google Docs
+
+To run the scraper once and push to Google Docs:
+
+```bash
+python main.py --mode once --output docs
 ```
 
 ### Run on Schedule
@@ -121,18 +155,26 @@ python main.py --mode schedule --interval 1
 
 This will scrape feeds every 1 hour.
 
-### Append to Existing Document
+### Append to Existing Document/Spreadsheet
 
 To append to a specific Google Doc:
 
 ```bash
-python main.py --mode once --doc-id YOUR_DOCUMENT_ID
+python main.py --mode once --output docs --doc-id YOUR_DOCUMENT_ID
+```
+
+To append to a specific Google Sheet:
+
+```bash
+python main.py --mode once --output sheets --sheet-id YOUR_SPREADSHEET_ID
 ```
 
 ### Command Line Options
 
 - `--mode`: Run mode (`once` or `schedule`)
-- `--doc-id`: Google Doc ID to append articles to
+- `--output`: Output format (`docs` or `sheets`)
+- `--doc-id`: Google Doc ID to append articles to (for docs output)
+- `--sheet-id`: Google Sheet ID to append articles to (for sheets output)
 - `--interval`: Scraping interval in hours (default: 1)
 
 ## First Run
@@ -140,17 +182,26 @@ python main.py --mode once --doc-id YOUR_DOCUMENT_ID
 On the first run, the script will:
 1. Open a browser window for Google OAuth authentication
 2. Ask you to sign in with your Google account
-3. Request permission to access Google Docs
+3. Request permission to access Google Docs and/or Google Sheets
 4. Save the authentication token for future runs
 
 ## Output
 
-The scraper will:
-- Create or append to a Google Doc with all matching articles
-- Log all activities to console and `scraper.log`
-- Display the Google Doc URL after each run
+### Google Sheets Output
 
-### Example Output Format
+When using Google Sheets, articles are organized in columns:
+
+| Timestamp | Title | Link | Summary | Source | Language | Published Date | Matched Keywords |
+|-----------|-------|------|---------|--------|----------|----------------|------------------|
+| 2025-12-29 14:10:00 | AAP announces... | https://... | The party... | Times of India | english | 2025-12-29T10:30:00Z | aap, party |
+
+- Header row is automatically formatted (bold, gray background)
+- Columns auto-resize for readability
+- Each scraping run appends new rows with timestamp
+
+### Google Docs Output Format
+
+When using Google Docs, articles are formatted as text:
 
 ```
 ================================================================================

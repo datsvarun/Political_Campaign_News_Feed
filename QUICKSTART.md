@@ -17,7 +17,7 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-### 2. Configure Keywords
+### 2. Configure Keywords and Output
 Edit `config.py` and customize:
 ```python
 KEYWORDS = [
@@ -27,25 +27,33 @@ KEYWORDS = [
     "Congress",
     # Add your keywords...
 ]
+
+# Choose output format
+OUTPUT_FORMAT = "sheets"  # or "docs"
 ```
 
 ### 3. Get Google Credentials
 1. Go to https://console.cloud.google.com/
 2. Create a new project
-3. Enable Google Docs API
+3. Enable Google Docs API and Google Sheets API
 4. Create OAuth credentials (Desktop app)
 5. Download as `credentials.json`
 
 ### 4. Run the Scraper
 
-**Test without Google Docs:**
+**Test without Google APIs:**
 ```bash
 python test_scraper.py
 ```
 
-**Run once (with Google Docs):**
+**Run once (with Google Sheets - default):**
 ```bash
 python main.py --mode once
+```
+
+**Run once (with Google Docs):**
+```bash
+python main.py --mode once --output docs
 ```
 
 On first run, it will open a browser for authentication.
@@ -58,17 +66,26 @@ python main.py --mode schedule
 ## Common Commands
 
 ```bash
-# Run once and exit
+# Run once with Google Sheets (default)
 python main.py --mode once
 
-# Run every 2 hours
-python main.py --mode schedule --interval 2
+# Run once with Google Docs
+python main.py --mode once --output docs
+
+# Run every 2 hours with Google Sheets
+python main.py --mode schedule --interval 2 --output sheets
+
+# Append to specific spreadsheet
+python main.py --mode once --sheet-id YOUR_SHEET_ID
 
 # Append to specific document
-python main.py --mode once --doc-id YOUR_DOC_ID
+python main.py --mode once --output docs --doc-id YOUR_DOC_ID
 
-# Test without Google Docs
+# Test without Google APIs
 python test_scraper.py
+
+# Test Google Sheets integration
+python test_sheets.py
 
 # Run unit tests
 python test_unit.py
@@ -84,12 +101,14 @@ AAP_Mumbai_RSS_Feed/
 ├── main.py              # Main script - run this
 ├── scraper.py           # RSS feed scraper
 ├── google_docs.py       # Google Docs integration
+├── google_sheets.py     # Google Sheets integration
 ├── config.py            # Configuration (customize this)
 ├── requirements.txt     # Dependencies
 ├── README.md            # Full documentation
 ├── ARCHITECTURE.md      # System design
 ├── TROUBLESHOOTING.md   # Common issues
 ├── test_scraper.py      # Integration test
+├── test_sheets.py       # Google Sheets test
 ├── test_unit.py         # Unit tests
 └── setup.sh            # Setup script
 ```
@@ -99,14 +118,29 @@ AAP_Mumbai_RSS_Feed/
 **config.py:**
 - `KEYWORDS` - List of keywords to search for
 - `RSS_FEEDS` - Dictionary of RSS feed URLs by language
+- `OUTPUT_FORMAT` - Choose "docs" or "sheets" (default: "sheets")
 - `GOOGLE_DOC_ID` - Document ID to append to (optional)
+- `GOOGLE_SHEET_ID` - Spreadsheet ID to append to (optional)
 - `DOC_TITLE_PREFIX` - Prefix for new document titles
+- `SHEET_TITLE_PREFIX` - Prefix for new spreadsheet titles
 - `SCRAPE_INTERVAL_HOURS` - How often to scrape (default: 1)
 - `MAX_ARTICLES_PER_RUN` - Max articles per run (default: 50)
 
-## Output Format
+## Output Formats
 
-Articles are pushed to Google Docs with:
+### Google Sheets (Recommended)
+Articles are organized in columns:
+- **Timestamp** - When the article was scraped
+- **Title** - Article headline
+- **Link** - URL to full article
+- **Summary** - Article summary/excerpt
+- **Source** - News source name
+- **Language** - Article language (english/hindi/marathi)
+- **Published Date** - Original publication date
+- **Matched Keywords** - Keywords that triggered the match
+
+### Google Docs
+Articles are formatted as text with:
 - Title
 - Source name and language
 - Published date

@@ -43,6 +43,13 @@ RSS_FEEDS = {
 GOOGLE_DOC_ID = ""
 DOC_TITLE_PREFIX = "AAP News Monitor"
 
+# Google Sheets Configuration
+GOOGLE_SHEET_ID = ""  # Leave empty to create new spreadsheet, or provide ID to append
+SHEET_TITLE_PREFIX = "AAP News Monitor"
+
+# Output Configuration
+OUTPUT_FORMAT = "sheets"  # Choose 'docs' for Google Docs or 'sheets' for Google Sheets
+
 # Scraping configuration
 SCRAPE_INTERVAL_HOURS = 1
 MAX_ARTICLES_PER_RUN = 50

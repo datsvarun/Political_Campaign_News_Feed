@@ -17,8 +17,11 @@ import pickle
 
 logger = logging.getLogger(__name__)
 
-# Scopes for Google Docs API
-SCOPES = ['https://www.googleapis.com/auth/documents']
+# Scopes for Google Docs API (includes Sheets for compatibility)
+SCOPES = [
+    'https://www.googleapis.com/auth/documents',
+    'https://www.googleapis.com/auth/spreadsheets'
+]
 
 
 class GoogleDocsWriter:

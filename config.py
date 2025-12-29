@@ -52,6 +52,13 @@ RSS_FEEDS = {
 GOOGLE_DOC_ID = ""  # Leave empty if you want to create a new doc each time, or provide a specific document ID
 DOC_TITLE_PREFIX = "AAP News Monitor"  # Prefix for document titles when creating new docs
 
+# Google Sheets Configuration
+GOOGLE_SHEET_ID = ""  # Leave empty to create a new spreadsheet each time, or provide a specific spreadsheet ID
+SHEET_TITLE_PREFIX = "AAP News Monitor"  # Prefix for spreadsheet titles when creating new sheets
+
+# Output Configuration
+OUTPUT_FORMAT = "sheets"  # Choose 'docs' for Google Docs or 'sheets' for Google Sheets
+
 # Scraping Configuration
 SCRAPE_INTERVAL_HOURS = 1  # How often to scrape (in hours)
 MAX_ARTICLES_PER_RUN = 50  # Maximum articles to fetch per scraping run

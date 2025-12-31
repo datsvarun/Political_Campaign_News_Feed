@@ -16,6 +16,7 @@ ENGLISH_KEYWORDS: List[str] = [
     "Polls",
     "Mumbai Election",
     "Brihanmumbai",
+    "Civic Polls"
 ]
 
 # Marathi Keywords - Politicians/Parties + Civic/Election

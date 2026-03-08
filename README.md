@@ -1,4 +1,4 @@
-# AAP_Mumbai_News_Feed
-An automated News feed aggregator designed to monitor news relevant for the Aam Aadmi Party (AAP) during the Mumbai Municipal Corporation Election 2026 (BMC Polls 2026). The tool fetches articles from various sources across languages through customised keywords, filters them for relevance, and pushes the consolidated updates to a Notion table for easy review by the campaign or research team.
+# Political_Campaign_News_Feed
+An automated news feed aggregator designed to monitor election and civic news relevant for political campaign and research teams (initially built for monitoring Aam Aadmi Party (AAP) coverage during the Mumbai Municipal Corporation Election 2026 / BMC Polls 2026). The tool fetches articles via Google News RSS search across English and Marathi using customized keywords, deduplicates and ranks results, and pushes consolidated updates to a Notion database for easy review.
 
 <img width="1429" height="613" alt="image" src="https://github.com/user-attachments/assets/c19a5c79-cd1e-4e65-b70c-69584677e2d7" />

@@ -1,12 +1,18 @@
 # Political Campaign News Feed (Google News RSS → Notion)
 
+Automated news monitoring system designed to track media coverage relevant to the Mumbai Municipal Corporation Election (BMC Polls 2026).
+The system aggregates news articles across multiple sources and languages, filters them using election-specific keywords, and publishes the results to a structured workspace for campaign monitoring.
+
 A lightweight Python bot that:
-- Searches **Google News RSS** for campaign/civic-election coverage using configurable keywords (currently **English + Marathi**).
-- **Ranks** stories by keyword priority.
-- **Deduplicates** by canonical URL and keeps a local `history.json` so you don’t re-add the same story.
-- Pushes new articles into a **Notion database** for review by campaign/research teams.
+1. Searches **Google News RSS** for campaign/civic-election coverage using configurable keywords (currently **English + Marathi**).
+2. **Ranks** stories by keyword priority.
+3. **Deduplicates** by canonical URL and keeps a local `history.json` so you don’t re-add the same story.
+4. Pushes new articles into a **Notion database** for review by campaign/research teams.
 
 > Repo focus (current defaults): monitoring Mumbai civic / BMC election coverage and major Maharashtra political actors.
+
+<img width="1525" height="684" alt="image" src="https://github.com/user-attachments/assets/9296fe51-aea1-424e-8088-4a7387460319" />
+
 
 ---
 

@@ -235,7 +235,7 @@ def is_telangana_relevant(article: Dict[str, str]) -> bool:
 
     # Keep strongly Telangana-specific items and avoid generic national noise
     return (has_geo or has_district or has_telugu_keyword or has_english_keyword) and (
-        has_politics or has_party or "telangana" in text or "హైదరాబాద్" in text
+        has_politics or has_party
     )
 
 

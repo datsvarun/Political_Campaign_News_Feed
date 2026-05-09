@@ -263,7 +263,7 @@ Expected behavior (`bot_telangana.py`):
 - Both history files store a list of canonical URLs already pushed.
 - Canonicalization currently keeps only: `scheme://netloc/path` and lowercases it (query params removed).
 
-If you want more/less aggressive dedupe, adjust `canonicalize_url()` in `bot.py`.
+If you want more/less aggressive dedupe, adjust `canonicalize_url()` in `bot.py` and `bot_telangana.py`.
 
 ---
 

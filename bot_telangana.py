@@ -62,6 +62,7 @@ KEYWORD_PRIORITY = {
 
 MAX_ENGLISH_ARTICLES = 40
 MAX_TELUGU_ARTICLES = 40
+MAX_NOTION_TEXT_LENGTH = 1999
 
 TELANGANA_DISTRICTS = {
     "adilabad", "bhadradri kothagudem", "hanamkonda", "hyderabad", "jagtial",
@@ -119,7 +120,8 @@ def build_feed_url(keywords: List[str], hl: str, ceid: str) -> str:
 
 def extract_target_url(url: str) -> str:
     parsed = urlparse(url)
-    if "news.google.com" in parsed.netloc:
+    hostname = parsed.netloc.lower().split(":")[0]
+    if hostname == "news.google.com":
         query = parse_qs(parsed.query)
         if "url" in query and query["url"]:
             return query["url"][0]
@@ -226,7 +228,7 @@ def is_telangana_relevant(article: Dict[str, str]) -> bool:
 
     # Keep strongly Telangana-specific items and avoid generic national noise
     return (has_geo or has_district or has_telugu_keyword or has_english_keyword) and (
-        has_politics or has_party or "telangana" in text or "హైదరాబాద్" in article["title"]
+        has_politics or has_party or "telangana" in text or "హైదరాబాద్" in text
     )
 
 
@@ -273,7 +275,7 @@ def fetch_articles(keywords: List[str], language: str, hl: str, ceid: str, max_a
             "canonical_url": canonicalize_url(str(link)),
             "source": extract_source(entry),
             "published": extract_date(entry),
-            "language": detect_language(str(title)) if language == "Telugu" else "English",
+            "language": detect_language(str(title)),
         }
 
         if is_telangana_relevant(article):
@@ -316,7 +318,7 @@ def push_to_notion(
     properties = {
         "Headline": {
             "title": [
-                {"text": {"content": article["title"][:1999]}}
+                {"text": {"content": article["title"][:MAX_NOTION_TEXT_LENGTH]}}
             ]
         },
         "Politician": {"select": {"name": article["politician"]}},
@@ -324,7 +326,7 @@ def push_to_notion(
         "URL": {"url": article["url"]},
         "Source": {
             "rich_text": [
-                {"text": {"content": article["source"][:1999]}}
+                {"text": {"content": article["source"][:MAX_NOTION_TEXT_LENGTH]}}
             ]
         },
         "Date": {"date": {"start": article["published"]}},
@@ -450,7 +452,8 @@ def main() -> None:
     ]
 
     # Sort by priority then recency
-    candidates.sort(key=lambda a: (a["priority"], a["published"]), reverse=True)
+    candidates.sort(key=lambda a: a["published"], reverse=True)
+    candidates.sort(key=lambda a: a["priority"], reverse=True)
 
     print(f"\nProcessing {len(candidates)} new Telangana articles...")
     summarize_categories(candidates)

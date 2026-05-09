@@ -240,6 +240,7 @@ python bot_telangana.py
 ```
 
 `bot_telangana.py` prioritizes Telangana categories (`Telangana News`, `Telangana Headlines`, `People`, `State Politics`) and applies Telangana-specific entity filters.
+It uses `MAX_ENGLISH_ARTICLES` and `MAX_TELUGU_ARTICLES` limits (English + Telugu streams).
 
 Expected behavior:
 - Fetches up to `MAX_ENGLISH_ARTICLES` and `MAX_MARATHI_ARTICLES`

@@ -242,18 +242,25 @@ python bot_telangana.py
 `bot_telangana.py` prioritizes Telangana categories (`Telangana News`, `Telangana Headlines`, `People`, `State Politics`) and applies Telangana-specific entity filters.
 It uses `MAX_ENGLISH_ARTICLES` and `MAX_TELUGU_ARTICLES` limits (English + Telugu streams).
 
-Expected behavior:
+Expected behavior (`bot.py`):
 - Fetches up to `MAX_ENGLISH_ARTICLES` and `MAX_MARATHI_ARTICLES`
 - Deduplicates within the batch (prefers Marathi if the canonical URL matches)
 - Skips anything already listed in `history.json`
 - Pushes remaining items into Notion
 - Updates `history.json`
 
+Expected behavior (`bot_telangana.py`):
+- Fetches up to `MAX_ENGLISH_ARTICLES` and `MAX_TELUGU_ARTICLES`
+- Deduplicates within the batch (prefers Telugu if the canonical URL matches)
+- Skips anything already listed in `history_telangana.json`
+- Pushes remaining items into Notion
+- Updates `history_telangana.json`
+
 ---
 
-## Deduplication details (`history.json`)
+## Deduplication details (`history.json`, `history_telangana.json`)
 
-- `history.json` stores a list of canonical URLs already pushed.
+- Both history files store a list of canonical URLs already pushed.
 - Canonicalization currently keeps only: `scheme://netloc/path` and lowercases it (query params removed).
 
 If you want more/less aggressive dedupe, adjust `canonicalize_url()` in `bot.py`.

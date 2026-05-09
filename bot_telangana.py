@@ -94,6 +94,13 @@ POLITICIANS: Dict[str, List[str]] = {
     "BJP": ["G. Kishan Reddy", "Bandi Sanjay Kumar", "Etela Rajender"],
     "AIMIM": ["Asaduddin Owaisi", "Akbaruddin Owaisi"],
 }
+ALL_POLITICIAN_NAMES = {
+    person.lower()
+    for people in POLITICIANS.values()
+    for person in people
+}
+ENGLISH_KEYWORDS_LOWER = [keyword.lower() for keyword in ENGLISH_KEYWORDS]
+TELUGU_KEYWORDS_LOWER = [keyword.lower() for keyword in TELUGU_KEYWORDS]
 
 HISTORY_PATH = Path("history_telangana.json")
 MAX_HISTORY_ENTRIES = 3000
@@ -203,7 +210,7 @@ def calculate_priority(text: str) -> int:
 def categorize_article(text: str) -> str:
     text_lower = text.lower()
 
-    if any(person.lower() in text_lower for people in POLITICIANS.values() for person in people):
+    if any(person in text_lower for person in ALL_POLITICIAN_NAMES):
         return "People"
     if any(term in text_lower for term in POLITICAL_TERMS):
         return "State Politics"
@@ -223,8 +230,8 @@ def is_telangana_relevant(article: Dict[str, str]) -> bool:
     has_district = any(term in text for term in TELANGANA_DISTRICTS)
     has_party = any(term in text for term in TELANGANA_PARTIES)
     has_politics = any(term in text for term in POLITICAL_TERMS)
-    has_telugu_keyword = any(keyword in text for keyword in (k.lower() for k in TELUGU_KEYWORDS))
-    has_english_keyword = any(keyword.lower() in text for keyword in ENGLISH_KEYWORDS)
+    has_telugu_keyword = any(keyword in text for keyword in TELUGU_KEYWORDS_LOWER)
+    has_english_keyword = any(keyword in text for keyword in ENGLISH_KEYWORDS_LOWER)
 
     # Keep strongly Telangana-specific items and avoid generic national noise
     return (has_geo or has_district or has_telugu_keyword or has_english_keyword) and (
@@ -235,7 +242,7 @@ def is_telangana_relevant(article: Dict[str, str]) -> bool:
 def is_telangana_context(article: Dict[str, str]) -> bool:
     text = f"{article['title']} {article['source']} {article['url']}".lower()
     return any(term in text for term in TELANGANA_ENTITIES) or any(
-        keyword.lower() in text for keyword in ENGLISH_KEYWORDS + TELUGU_KEYWORDS
+        keyword in text for keyword in ENGLISH_KEYWORDS_LOWER + TELUGU_KEYWORDS_LOWER
     )
 
 
@@ -452,8 +459,7 @@ def main() -> None:
     ]
 
     # Sort by priority then recency
-    candidates.sort(key=lambda a: a["published"], reverse=True)
-    candidates.sort(key=lambda a: a["priority"], reverse=True)
+    candidates.sort(key=lambda a: (a["priority"], a["published"]), reverse=True)
 
     print(f"\nProcessing {len(candidates)} new Telangana articles...")
     summarize_categories(candidates)

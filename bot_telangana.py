@@ -110,10 +110,7 @@ def env_flag(name: str, default: bool = False) -> bool:
 
 def build_feed_url(keywords: List[str], hl: str, ceid: str) -> str:
     query = " OR ".join(f'"{kw}"' for kw in keywords)
-    constrained_query = (
-        f"({query}) AND (\"Telangana\" OR \"Hyderabad\" OR \"తెలంగాణ\" OR \"హైదరాబాద్\")"
-    )
-    encoded = quote_plus(constrained_query)
+    encoded = quote_plus(query)
     return (
         "https://news.google.com/rss/search?"
         f"q={encoded}&hl={hl}&gl=IN&ceid={ceid}&tbs=qdr:d"
@@ -233,6 +230,13 @@ def is_telangana_relevant(article: Dict[str, str]) -> bool:
     )
 
 
+def is_telangana_context(article: Dict[str, str]) -> bool:
+    text = f"{article['title']} {article['source']} {article['url']}".lower()
+    return any(term in text for term in TELANGANA_ENTITIES) or any(
+        keyword.lower() in text for keyword in ENGLISH_KEYWORDS + TELUGU_KEYWORDS
+    )
+
+
 def fetch_articles(keywords: List[str], language: str, hl: str, ceid: str, max_articles: int) -> List[Dict[str, str]]:
     print(f"Fetching {language} articles...")
     feed_url = build_feed_url(keywords, hl=hl, ceid=ceid)
@@ -244,7 +248,8 @@ def fetch_articles(keywords: List[str], language: str, hl: str, ceid: str, max_a
     }
 
     parsed = feedparser.parse(feed_url, request_headers=headers)
-    articles = []
+    strict_articles = []
+    relaxed_articles = []
 
     for entry in parsed.entries[:max_articles]:
         link = entry.get("link")
@@ -272,10 +277,17 @@ def fetch_articles(keywords: List[str], language: str, hl: str, ceid: str, max_a
         }
 
         if is_telangana_relevant(article):
-            articles.append(article)
+            strict_articles.append(article)
+        elif is_telangana_context(article):
+            relaxed_articles.append(article)
 
-    print(f"Fetched {len(articles)} relevant {language} articles")
-    return articles
+    if strict_articles:
+        print(f"Fetched {len(strict_articles)} relevant {language} articles (strict)")
+        return strict_articles
+
+    fallback = relaxed_articles[:max_articles]
+    print(f"Fetched {len(fallback)} relevant {language} articles (relaxed fallback)")
+    return fallback
 
 
 def create_notion_client() -> Client:
@@ -352,8 +364,53 @@ def summarize_categories(candidates: List[Dict[str, str]]) -> None:
         print(f"  - {category}: {count}")
 
 
+def run_offline_sample_validation() -> None:
+    sample_titles = [
+        "Telangana Assembly debates irrigation projects in Hyderabad",
+        "Revanth Reddy announces welfare plan for Warangal",
+        "BRS and BJP leaders trade charges ahead of GHMC polls",
+        "India GDP growth outlook revised by global agency",
+        "Mumbai civic body discusses transport budget",
+        "KTR addresses youth rally in Secunderabad",
+        "తెలంగాణ అసెంబ్లీలో రైతు సమస్యలపై చర్చ",
+        "హైదరాబాద్‌లో మంత్రివర్గ సమావేశం",
+        "National cricket team prepares for overseas tour",
+    ]
+
+    articles: List[Dict[str, str]] = []
+    for idx, title in enumerate(sample_titles, start=1):
+        category = categorize_article(title)
+        article = {
+            "party": "Unknown",
+            "politician": "Unknown",
+            "priority": calculate_priority(title),
+            "category": category,
+            "tags": build_tags(category),
+            "title": title,
+            "url": f"https://example.com/article-{idx}",
+            "canonical_url": f"https://example.com/article-{idx}",
+            "source": "Sample",
+            "published": datetime.now(timezone.utc).isoformat(),
+            "language": detect_language(title),
+        }
+        articles.append(article)
+
+    filtered = [a for a in articles if is_telangana_relevant(a) or is_telangana_context(a)]
+
+    print("Offline sample validation:")
+    print(f"  Input sample size: {len(articles)}")
+    print(f"  Retained as Telangana-focused: {len(filtered)}")
+    print_sample(filtered, sample_size=len(filtered))
+    summarize_categories(filtered)
+
+
 def main() -> None:
     dry_run = env_flag("DRY_RUN", default=False)
+    offline_sample = env_flag("OFFLINE_SAMPLE", default=False)
+
+    if offline_sample:
+        run_offline_sample_validation()
+        return
 
     # Load history
     history = load_history(HISTORY_PATH)

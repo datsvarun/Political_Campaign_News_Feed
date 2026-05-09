@@ -225,6 +225,12 @@ Dry-run sample (recommended first):
 DRY_RUN=1 python bot_telangana.py
 ```
 
+Offline validation sample (no network required):
+
+```bash
+OFFLINE_SAMPLE=1 python bot_telangana.py
+```
+
 Production run to push to Notion:
 
 ```bash
